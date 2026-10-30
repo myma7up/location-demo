@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شاشة استقبال البلاغ - تجربة</title>
+<style>
+  body{font-family:Tahoma,Arial,sans-serif;background:#f7f4ef;color:#1c1a17;margin:0;padding:24px;line-height:1.9}
+  .card{max-width:520px;margin:0 auto;background:#fff;border-radius:16px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  h1{font-size:20px;margin:0 0 8px;color:#166a5d}
+  p{font-size:15px;margin:8px 0}
+  .banner{background:#fdf3e0;border:1px solid #e8d5a8;border-radius:10px;padding:12px;font-size:14px}
+  .map{position:relative;height:280px;margin:16px 0;border-radius:12px;background:#f4efe9;
+    background-image:repeating-linear-gradient(0deg,transparent,transparent 39px,#e3d9cc 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,#e3d9cc 40px)}
+  .pin{position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;background:#166a5d;border:3px solid #fff;border-radius:50%;box-shadow:0 1px 6px rgba(0,0,0,.35)}
+  .circle{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:2px solid #166a5d;border-radius:50%;background:rgba(22,106,93,.12)}
+  .tag{position:absolute;left:50%;top:50%;transform:translate(-50%,26px);background:#fff;border:1px solid #d8cfc2;border-radius:8px;padding:2px 10px;font-size:13px;white-space:nowrap}
+  .row{display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:8px 0;font-size:15px}
+  .row b{font-weight:normal;color:#555}
+  a.maplink{display:block;text-align:center;margin-top:14px;padding:14px;border:2px solid #166a5d;color:#166a5d;border-radius:12px;text-decoration:none;font-weight:bold}
+  .small{font-size:13px;color:#666}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>شاشة استقبال البلاغ</h1>
+  <div class="banner">شاشة توضيحية لغرفة العمليات - تجربة، مش نظام إسعاف رسمي. البيانات وصلت عن طريق رابط اتبعت في رسالة، مش عن طريق شبكة طوارئ.</div>
+  <div id="bad" style="display:none"><p>الرابط مش كامل أو مش مظبوط. افتح الرابط من الرسالة اللي وصلتك كاملًا من غير ما ينقص منه حاجة.</p></div>
+  <div id="ok" style="display:none">
+    <div class="map"><div class="circle" id="circ"></div><div class="pin"></div><div class="tag">موقع البلاغ</div></div>
+    <p class="small">الرسم ده توضيحي بس: الخريطة مش خريطة حقيقية، والدائرة بتكبر وتصغر مع رقم هامش الدقة بشكل تقريبي، مش بمقياس مسافات مضبوط.</p>
+    <div class="row"><b>البلاغ</b><span>بلاغ تجريبي مستلم</span></div>
+    <div class="row"><b>خط العرض</b><span id="lat"></span></div>
+    <div class="row"><b>خط الطول</b><span id="lng"></span></div>
+    <div class="row"><b>هامش الدقة</b><span id="acc"></span></div>
+    <div class="row"><b>وقت الإرسال</b><span id="time"></span></div>
+    <div class="row"><b>المصدر</b><span>رابط تجريبي من صفحة المتصل</span></div>
+    <a class="maplink" id="osm" href="#" target="_blank" rel="noopener">فتح النقطة على خريطة OpenStreetMap</a>
+    <p class="small">تنبيه: الضغط على زرار الخريطة بيفتح موقع OpenStreetMap وبيبعتله الإحداثيات عشان يعرضها. الإحداثيات نفسها جاية في الجزء اللي بعد # في الرابط، وده مش بيتبعت لأي سيرفر لما الصفحة بتفتح.</p>
+  </div>
+</div>
+<script>
+(function(){
+  var h=location.hash.replace(/^#/,'');
+  var p={};
+  h.split('&').forEach(function(kv){var i=kv.indexOf('=');if(i>0)p[kv.slice(0,i)]=decodeURIComponent(kv.slice(i+1));});
+  var lat=parseFloat(p.lat), lng=parseFloat(p.lng), acc=parseFloat(p.acc);
+  if(!isFinite(lat)||!isFinite(lng)||!isFinite(acc)||Math.abs(lat)>90||Math.abs(lng)>180||acc<=0){document.getElementById('bad').style.display='block';return;}
+  document.getElementById('lat').textContent=lat.toFixed(6);
+  document.getElementById('lng').textContent=lng.toFixed(6);
+  document.getElementById('acc').textContent='حوالي '+Math.round(acc)+' متر';
+  var t=parseInt(p.t,10);
+  document.getElementById('time').textContent=isFinite(t)?new Date(t).toLocaleString('ar-EG'):'غير متوفر';
+  var s=Math.max(36,Math.min(240,acc*1.2));
+  var c=document.getElementById('circ'); c.style.width=s+'px'; c.style.height=s+'px';
+  document.getElementById('osm').href='https://www.openstreetmap.org/?mlat='+lat+'&mlon='+lng+'#map=17/'+lat+'/'+lng;
+  document.getElementById('ok').style.display='block';
+})();
+</script>
+</body>
+</html>
