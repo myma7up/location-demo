@@ -29,6 +29,7 @@
     الصفحة دي <b>مش بتبعت ولا بتخزن</b> موقعك في أي مكان؛ كل حاجة بتحصل جوه موبايلك بس.
   </div>
   <button id="go">حدد موقعي دلوقتي</button>
+  <p class="small" style="text-align:center"><a id="preview" href="#" style="color:#166a5d">معاينة شاشة الاستقبال بموقع افتراضي</a></p>
   <div id="err"></div>
   <div id="result">
     <div class="row"><b>خط العرض</b><span id="lat"></span></div>
@@ -38,9 +39,12 @@
     <p class="small">في أنظمة الطوارئ الحقيقية بتوصل لغرفة العمليات بيانات من نفس النوع ده (موقع + دقة + وقت)، بالإضافة لبيانات تانية حسب كل نظام.</p>
     <a class="maplink" id="osm" href="#" target="_blank" rel="noopener">شوف النقطة على خريطة OpenStreetMap</a>
     <p class="small">تنبيه: الضغط على زرار الخريطة بيفتح موقع OpenStreetMap وبيبعتله الإحداثيات عشان يعرضها. لو مش عايز كده، متدوسش عليه - النتيجة فوق كفاية.</p>
+    <a class="maplink" id="send" href="#" target="_blank" rel="noopener" style="background:#166a5d;color:#fff">ابعت الموقع لشاشة الاستقبال (واتساب)</a>
+    <p class="small">الزرار ده بيفتح واتساب عشان تبعت رابط شاشة الاستقبال لنفسك على جهاز تاني أو لأي حد تختاره. الإحداثيات بتتحط في الجزء اللي بعد # في الرابط، ومش بتتسجل عندنا ولا عند GitHub.</p>
   </div>
 </div>
 <script>
+document.getElementById('preview').href='receiver.html#lat=30.0131&lng=31.2089&acc=18&t='+Date.now();
 var btn=document.getElementById('go'), err=document.getElementById('err'), res=document.getElementById('result');
 btn.addEventListener('click',function(){
   err.style.display='none'; btn.disabled=true; btn.textContent='جاري تحديد الموقع...';
@@ -52,6 +56,8 @@ btn.addEventListener('click',function(){
     document.getElementById('time').textContent=new Date().toLocaleTimeString('ar-EG');
     var u='https://www.openstreetmap.org/?mlat='+p.coords.latitude+'&mlon='+p.coords.longitude+'#map=17/'+p.coords.latitude+'/'+p.coords.longitude;
     document.getElementById('osm').href=u;
+    var recv='https://myma7up.github.io/location-demo/receiver.html#lat='+p.coords.latitude+'&lng='+p.coords.longitude+'&acc='+p.coords.accuracy+'&t='+Date.now();
+    document.getElementById('send').href='https://wa.me/?text='+encodeURIComponent('بلاغ تجريبي - موقع المتصل:\n'+recv);
     res.style.display='block'; btn.disabled=false; btn.textContent='حدد موقعي تاني';
   },function(e){
     var m='حصل خطأ، جرب تاني.';
